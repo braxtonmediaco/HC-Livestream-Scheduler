@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Documentation - Livestream Scheduler Tool</title>
+    <style>
+        :root {
+            --primary: #007bff;
+            --primary-hover: #0056b3;
+            --success: #28a745;
+            --success-hover: #218838;
+            --info: #17a2b8;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --purple: #6f42c1;
+            --orange: #fd7e14;
+            --bg-color: #f4f6f9;
+            --surface: #ffffff;
+            --text-main: #333333;
+            --text-muted: #6c757d;
+            --border: #dee2e6;
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            margin: 0; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            background: var(--surface); 
+            max-width: 900px; 
+            margin: 0 auto; 
+            border-radius: 10px; 
+            border: 1px solid var(--border); 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+            overflow: hidden;
+            padding: 40px;
+        }
+
+        /* --- Custom Documentation Styling --- */
+        .doc-header {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .doc-header h1 { margin: 0; font-size: 2rem; color: var(--text-main); }
+        
+        h2 { 
+            color: var(--text-main); 
+            margin-top: 35px; 
+            margin-bottom: 15px; 
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+        h3 { color: var(--primary); margin-top: 25px; margin-bottom: 10px; font-size: 1.2rem; }
+        
+        p { color: var(--text-main); margin-top: 0; margin-bottom: 15px; }
+        .description { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 30px; }
+
+        /* --- Steps & Alert Panels --- */
+        ol, ul { padding-left: 25px; margin-bottom: 20px; }
+        li { margin-bottom: 12px; }
+        strong { color: #000; }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            font-size: 0.8em;
+            font-weight: 700;
+            border-radius: 4px;
+            color: white;
+            text-transform: uppercase;
+        }
+        .badge-step { background-color: var(--primary); }
+        .badge-tab { background-color: var(--purple); }
+
+        .alert-box { 
+            padding: 15px 20px; 
+            border-radius: 6px; 
+            border-left: 5px solid transparent;
+            margin: 25px 0;
+            background: #fafbfc;
+        }
+        .alert-info { border-left-color: var(--info); background-color: #f0f9fa; }
+        .alert-warning { border-left-color: var(--warning); background-color: #fffdf5; }
+        .alert-danger { border-left-color: var(--danger); background-color: #fff5f5; }
+
+        /* --- UI Visual Reproductions --- */
+        .mock-ui-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 4px;
+            color: white;
+            background-color: var(--primary);
+            border: none;
+            margin: 0 4px;
+        }
+        .mock-success { background-color: var(--success); }
+        .mock-purple { background-color: var(--purple); }
+        .mock-orange { background-color: var(--orange); }
+
+        .code-snippet {
+            background-color: #e9ecef; 
+            padding: 4px 8px; 
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace; 
+            font-size: 14px; 
+            color: #212529;
+            display: inline-block;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            padding: 10px 18px;
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .btn-back:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div class="doc-header">
+            <div>
+                <h1>Standard Operating Guide</h1>
+                <p style="margin: 5px 0 0 0; color: var(--text-muted);">Holy Cross Automated Livestream & Thumbnail Engine</p>
+            </div>
+            <a href="index.html" class="btn-back">⬅ Return to Scheduler</a>
+        </div>
+
+        <p class="description">
+            This tool automates data synchronization between church calendars and design master assets, running batch modifications directly inside your web browser via programmatic Photopea scripts. No external cloud dependencies required.
+        </p>
+
+        <h2><span class="badge badge-step">Phase 1</span> Initialize Workspace Storage</h2>
+        <p> Before processing data elements or update configurations, you must link your operational filesystem.</p>
+        <ol>
+            <li>Locate the top global utility element bar labeled <strong>Project Workspace</strong>.</li>
+            <li>Click the action target <span class="mock-ui-btn">Choose Output Folder (To Save Images)</span>.</li>
+            <li>Select your workspace drive location. The browser will issue a permissions pop-up request asking for permission to look at and save data to that folder. Select <strong>View Files</strong> followed by <strong>Save Changes / Allow Access</strong>.</li>
+        </ol>
+        <div class="alert-box alert-info">
+            <strong>Automated Folder Mapping:</strong> The engine formats everything inside that directory based on the row date. For instance, a record assigned to <span class="code-snippet">2026-05-31</span> will generate a top-tier tracking block labeled <span class="code-snippet">2026-05-31/</span> and build a subfolder called <span class="code-snippet">Thumbnails/</span> inside it to sort your assets.
+        </div>
+
+        <h2><span class="badge badge-step">Phase 2</span> DataSheet Management</h2>
+        <p>The <span class="badge badge-tab">1. DataSheet Editor</span> tab functions as the single source of truth for the entire page. All text updates parse straight from this module.</p>
+        
+        <h3>Adding Matrix Data</h3>
+        <ul>
+            <li><strong>Manual Updates:</strong> You can click on the cell spaces underneath the <strong>Gospel</strong> and <strong>Festival</strong> column headers to type your texts. Pressing <span class="code-snippet">Enter</span> automatically targets the immediate cell layout directly beneath your selection.</li>
+            <li><strong>Automated Date Generation:</strong>
+                <br>• Use <span class="mock-ui-btn mock-purple">+ Add Next Sunday</span> or <span class="mock-ui-btn mock-purple">+ Add Next Wednesday</span> to auto-calculate structural tracking points relative to your last row entry.
+                <br>• Use <span class="mock-ui-btn mock-purple">+ Add Rest of Month</span> to loop and generate entries through the end of the current month.
+            </li>
+        </ul>
+
+        <h3>Importing & Exporting Metadata</h3>
+        <ul>
+            <li>Clicking <span class="mock-ui-btn mock-info">⬇ Download CSV</span> backs up your matrix mapping profile configuration parameters out to a standard flat sheet.</li>
+            <li>Clicking <span class="mock-ui-btn mock-orange">⬆ Upload CSV</span> parses previous tracking profiles straight back into the live memory loop.</li>
+        </ul>
+
+        <h2><span class="badge badge-step">Phase 3</span> Batch Rendering Engines</h2>
+        <p>Navigate to tab <span class="badge badge-tab">2. PSD Batch Updater</span>. This runs deep execution layers into the targeted background processing structures.</p>
+        <ol>
+            <li><strong>Target Graphic Assets:</strong> Search for built-in template profiles on GitHub via the searchable dropdown selections, or use a <strong>Custom Upload</strong> button selection to point directly to regional localized layout layers.</li>
+            <li><strong>Activation Parameters:</strong> If you specify a <strong>Sermon PSD</strong> asset along with your primary **Livestream PSD**, the processor maps out dual rendering tracks. It labels the second set with an appended suffix string: <span class="code-snippet">_Sermon</span>.</li>
+            <li><strong>Execution Loop:</strong> Press <span class="mock-ui-btn mock-success">Process Batch</span>. The background runtime environment hooks directly into Photopea's layer model via internal messaging:
+                <ul>
+                    <li>The engine maps document trees to find target editable slots explicitly labeled: <span class="code-snippet">Gospel</span>, <span class="code-snippet">Date</span>, and <span class="code-snippet">Festival</span>.</li>
+                    <li>It overrides placeholder strings with rows derived directly from your setup datasheet.</li>
+                    <li>The system renders out both raw high-fidelity <span class="code-snippet">.psd</span> templates and flattened target <span class="code-snippet">.jpg</span> print files, sorting them directly into your mapped local drive folders.</li>
+                </ul>
+            </li>
+        </ol>
+        <div class="alert-box alert-danger">
+            <strong>Processing Note:</strong> Do not close out or change focus away from the active tab panel workspace while the green bar states are ticking. Interrupting browser canvas cycles will drop active macro operations.
+        </div>
+
+        <h2><span class="badge badge-step">Phase 4</span> YouTube Metadata Injection</h2>
+        <p>Navigate to tab <span class="badge badge-tab">3. Livestream Scheduler</span> to prepare distribution uploads.</p>
+        <ol>
+            <li>Click <span class="mock-ui-btn mock-success">Scan Output Folder & Generate Table</span>.</li>
+            <li>The software will search through local subfolders to verify structural matches for newly outputted image files.</li>
+            <li><strong>Intelligent Time-Slot Optimization:</strong> The scheduling algorithms run checks on dates to map expected service hours automatically:
+                <ul>
+                    <li><strong>Mid-week / Weekday dates:</strong> Default target registers immediately at <span class="code-snippet">6:00 P.M.</span></li>
+                    <li><strong>1st/3rd Sunday cycles:</strong> Evaluates tracking to pre-select morning slots for <span class="code-snippet">9:30 A.M.</span></li>
+                    <li><strong>Alternative Sunday instances:</strong> Defaults parameters straight to standard <span class="code-snippet">8:00 A.M.</span></li>
+                </ul>
+            </li>
+            <li><strong>Copy-Paste Integration:</strong> If you need to make corrections, use the manual time drop-down fields to adjust the variables on the fly. This will update the string array output block immediately. Click any gray string element line layout to highlight and copy it cleanly to your clipboard, ready to drop straight into YouTube's broadcast panel.</li>
+        </ol>
+
+    </div>
+
+</body>
+</html>

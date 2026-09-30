@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holy Cross Livestream Scheduler</title>
+    <style>
+        :root {
+            --primary: #007bff;
+            --primary-hover: #0056b3;
+            --success: #28a745;
+            --success-hover: #218838;
+            --info: #17a2b8;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --purple: #6f42c1;
+            --orange: #fd7e14;
+            --bg-color: #f4f6f9;
+            --surface: #ffffff;
+            --text-main: #333333;
+            --text-muted: #6c757d;
+            --border: #dee2e6;
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            margin: 0; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            padding: 40px 20px;
+        }
+        
+        .app-container {
+            background: var(--surface); 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            border-radius: 10px; 
+            border: 1px solid var(--border); 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        /* --- Global Settings Bar --- */
+        .global-settings {
+            padding: 20px 25px;
+            background-color: #fcfcfc;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .global-settings h2 { margin: 0; font-size: 1.4rem; color: var(--text-main); display: flex; align-items: center; gap: 8px;}
+        .global-folder-wrapper { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .global-folder-wrapper .folder-display { margin-top: 0; font-size: 1em; }
+
+        /* --- Tabs Navigation --- */
+        .tab-nav {
+            display: flex;
+            background-color: #e9ecef;
+            border-bottom: 1px solid var(--border);
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 18px 20px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            outline: none;
+        }
+        .tab-btn:hover {
+            background-color: #dde2e6;
+            color: var(--text-main);
+        }
+        .tab-btn.active {
+            background-color: var(--surface);
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        /* --- Tab Content --- */
+        .tab-content {
+            display: none;
+            padding: 40px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        h2 { margin-top: 0; color: var(--text-main); margin-bottom: 10px; }
+        .description { color: var(--text-muted); margin-top: 0; margin-bottom: 25px; line-height: 1.6; }
+
+        /* --- Forms & Layout --- */
+        .form-row { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .form-group { 
+            flex: 1; 
+            min-width: 250px;
+            padding: 20px; 
+            background: #fafbfc; 
+            border: 1px solid var(--border); 
+            border-radius: 6px; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        label { display: block; font-weight: 600; margin-bottom: 10px; color: var(--text-main); }
+        .hint { font-size: 0.85em; color: var(--text-muted); margin-top: 8px; }
+        
+        input[type="file"], select.form-select, input[type="text"].form-select { 
+            display: block; width: 100%; padding: 10px; background: white; 
+            border: 1px solid #ced4da; border-radius: 4px; cursor: pointer; box-sizing: border-box; 
+            font-family: inherit; font-size: inherit; color: inherit;
+        }
+        
+        /* Make datalist inputs look a bit more like search inputs */
+        input[type="text"].form-select::placeholder { color: #adb5bd; }
+        input[type="text"].form-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(0,123,255,.25); }
+
+        /* --- Buttons --- */
+        .btn {
+            padding: 12px 20px; cursor: pointer; border: none; border-radius: 5px; 
+            color: white; font-weight: 600; font-size: 15px; transition: opacity 0.2s, background-color 0.2s;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn:hover:not(:disabled) { opacity: 0.9; }
+        .btn:disabled { background-color: var(--text-muted) !important; cursor: not-allowed; }
+        
+        .btn-primary { background-color: var(--primary); }
+        .btn-success { background-color: var(--success); }
+        .btn-info { background-color: var(--info); }
+        .btn-purple { background-color: var(--purple); }
+        .btn-orange { background-color: var(--orange); }
+        .btn-danger { background-color: var(--danger); }
+        .btn-outline { background-color: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background-color: var(--primary); color: white; }
+        
+        .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+        .w-100 { width: 100%; }
+
+        /* --- Tables --- */
+        .table-container { overflow-x: auto; border-radius: 6px; border: 1px solid var(--border); margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; background: white; text-align: left; }
+        th, td { padding: 15px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        th { background-color: #f8f9fa; color: #495057; font-weight: 600; white-space: nowrap; }
+        tr:hover td { background-color: #fcfcfc; }
+        
+        /* DataSheet Specific Table Styles */
+        #inputTable input[type="date"] { border: none; width: 100%; font-family: inherit; font-size: inherit; background: transparent; color: var(--text-main); outline: none; cursor: pointer; }
+        #inputTable td[contenteditable="true"] { white-space: nowrap; overflow: hidden; outline: none; }
+        #inputTable td[contenteditable="true"]:focus { background-color: #e9ecef; box-shadow: inset 0 0 0 2px var(--primary); border-radius: 4px; }
+
+        /* Scheduler Specific Styles */
+        .thumb-cell { width: 160px; text-align: center; }
+        .thumb-preview { max-width: 150px; max-height: 100px; border-radius: 4px; border: 1px solid #ccc; object-fit: cover; display: block; }
+        .no-thumb { width: 150px; height: 85px; background-color: #e9ecef; color: #adb5bd; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px dashed #ccc; font-size: 0.85em; }
+        .folder-display { color: var(--success); font-weight: bold; word-break: break-all; margin-top: 10px; display: block; }
+        
+        .yt-title {
+            background-color: #e9ecef; padding: 10px 14px; border-radius: 4px; border: 1px solid #ced4da;
+            font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #212529;
+            user-select: all; cursor: pointer; display: block; white-space: nowrap;
+        }
+        .yt-title:hover { background-color: #dde2e6; }
+
+        /* --- Status & Progress --- */
+        .status-box { margin-top: 20px; padding: 15px; border-radius: 6px; font-weight: bold; text-align: center; border: 1px solid transparent; }
+        .status-info { background-color: #e2e3e5; color: #383d41; border-color: #d6d8db; }
+        .status-success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .status-error { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        .status-warning { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
+        
+        .progress-container { margin-top: 20px; display: none; }
+        .progress-bar-bg { background-color: #e9ecef; border-radius: 6px; height: 24px; width: 100%; overflow: hidden; border: 1px solid #ced4da; }
+        .progress-bar-fill { background-color: var(--success); height: 100%; width: 0%; transition: width 0.3s ease; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 0.9em; font-weight: bold; margin-bottom: 8px; color: var(--text-muted); }
+
+        /* Hidden elements */
+        #photopea { 
+            position: absolute; 
+            top: -9999px; 
+            left: -9999px; 
+            width: 800px; 
+            height: 600px; 
+            opacity: 0; 
+            pointer-events: none; 
+            border: none; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div class="global-settings">
+            <h2>Project Workspace</h2> <button class="btn btn-primary"><a href="howto.html">How to Tutorial</a></button>
+            <div class="global-folder-wrapper">
+                <span class="folder-display hint" id="global-folderNameDisplay">No output folder selected</span>
+                <button id="global-selectFolderBtn" class="btn btn-primary">Choose Output Folder (To Save Images)</button>
+            </div>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab(event, 'tab-datasheet')">1. DataSheet Editor</button>
+            <button class="tab-btn" onclick="switchTab(event, 'tab-psd')">2. PSD Batch Updater</button>
+            <button class="tab-btn" onclick="switchTab(event, 'tab-scheduler')">3. Livestream Scheduler</button>
+        </div>
+
+        <div id="tab-datasheet" class="tab-content active">
+            <h2>Gospel DataSheet Generator</h2>
+            <p class="description">Create and manage your DataSheet here. <strong>Tabs 2 and 3 will automatically use the data directly from this table.</strong></p>
+            
+            <div class="table-container">
+                <table id="inputTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Gospel</th>
+                            <th>Festival</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="date" class="row-date"></td>
+                            <td contenteditable="true" onkeydown="handleEnter(event)"></td>
+                            <td contenteditable="true" onkeydown="handleEnter(event)"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-success" onclick="addRow()">+ Add Row</button>
+                <button class="btn btn-purple" onclick="addNextSunday()">+ Add Next Sunday</button>
+                <button class="btn btn-purple" onclick="addNextWednesday()">+ Add Next Wednesday</button>
+                <button class="btn btn-purple" onclick="addRestOfMonth()">+ Add Rest of Month</button>
+                <button class="btn btn-info" onclick="downloadCSV()">⬇ Download CSV</button>
+                
+                <input type="file" id="ds-csvUpload" accept=".csv" style="display: none;" onchange="handleDSFileUpload(event)">
+                <button class="btn btn-orange" onclick="document.getElementById('ds-csvUpload').click()">⬆ Upload CSV</button>
+                
+                <button class="btn btn-outline" onclick="openTemplate()">Open Church Calendar</button>
+                <button class="btn btn-danger" onclick="clearTable()">🗑 Clear Table</button>
+            </div>
+        </div>
+
+        <div id="tab-psd" class="tab-content">
+            <h2>Batch PSD Updater</h2>
+            <p class="description">Select a template from your GitHub repository, or manually upload one. The engine will sync directly with the DataSheet and save directly to your Output Folder.</p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="liveTemplateSelect">Livestream PSD (From GitHub Repo)</label>
+                    <input type="text" id="liveTemplateSelect" list="liveDatalist" class="form-select" placeholder="-- Search or select Livestream template --" oninput="clearManualUploads()">
+                    <datalist id="liveDatalist"></datalist>
+                </div>
+                <div class="form-group">
+                    <label for="sermonTemplateSelect">Sermon PSD (From GitHub Repo)</label>
+                    <input type="text" id="sermonTemplateSelect" list="sermonDatalist" class="form-select" placeholder="-- Search or select Sermon template --" oninput="clearManualUploads()">
+                    <datalist id="sermonDatalist"></datalist>
+                </div>
+            </div>
+
+            <p style="margin: -5px 0 15px 0; font-weight: bold; text-align: center; color: var(--text-muted);">--- OR UPLOAD CUSTOM ---</p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="psdUpload">Livestream PSD (Custom Upload)</label>
+                    <input type="file" id="psdUpload" accept=".psd" onchange="clearRepoSelects()">
+                </div>
+                <div class="form-group">
+                    <label for="psdSermonUpload">Sermon PSD (Custom Upload)</label>
+                    <input type="file" id="psdSermonUpload" accept=".psd" onchange="clearRepoSelects()">
+                </div>
+            </div>
+
+            <button id="psd-processBtn" class="btn btn-success w-100" disabled>Waiting for Engine...</button>
+
+            <div id="psd-status" class="status-box status-warning">Loading background rendering engine...</div>
+            
+            <div id="psd-progressContainer" class="progress-container">
+                <div class="progress-header">
+                    <span>Batch Progress</span>
+                    <span id="psd-progressText">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="psd-progressBar" class="progress-bar-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-scheduler" class="tab-content">
+            <h2>Thumbnail & Title Scheduler</h2>
+            <p class="description">Reads the live DataSheet from Tab 1 and smartly scans your Output Folder to generate copy-paste titles for YouTube.</p>
+            
+            <button id="sch-generateBtn" class="btn btn-success w-100">Scan Output Folder & Generate Table</button>
+
+            <div class="table-container" id="sch-tableContainer" style="display: none;">
+                <table id="sch-dataTable">
+                    <thead>
+                        <tr>
+                            <th>Thumbnail</th>
+                            <th>Festival</th>
+                            <th>Gospel</th>
+                            <th>Date</th>
+                            <th>Service Time</th>
+                            <th>YouTube Title (Click to Copy)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sch-tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <iframe id="photopea" src="https://www.photopea.com#%7B%7D" allow="clipboard-read; clipboard-write"></iframe>
+
+    <script>
+        // ==========================================
+        // REPOSITORY TEMPLATE CONFIGURATION
+        // ==========================================
+        const REPO_TEMPLATES = [
+            "Advent Sunday #1 Livestream.psd",
+            "Advent Sunday #2 Livestream.psd",
+            "Advent Sunday #3 Livestream.psd",
+            "Advent Sunday #4 Livestream.psd",
+            "Advent Sunday (General).psd",
+            "Advent Sunday Sermon.psd",
+            "Advent Wednesday Livestream.psd",
+            "All Saints Livestream.psd",
+            "All Saints Sermon.psd",
+            "Ash Wednesday Livestream.psd",
+            "Christmas Day Livestream.psd",
+            "Christmas Day Sermon.psd",
+            "Christmas Eve Livestream.psd",
+            "Christmas Eve Sermon.psd",
+            "Easter Sunday Livestream.psd",
+            "Easter Sunday Sermon.psd",
+            "Funeral Livestream.psd",
+            "Good Friday Livestream.psd",
+            "Lent Sunday Livestream.psd",
+            "Lent Sunday Sermon.psd",
+            "Lent Wednesday Livestream.psd",
+            "Maundy Thursday Livestream.psd",
+            "Palm Sunday Livestream.psd",
+            "Palm Sunday Sermon.psd",
+            "Pentecost Livestream.psd",
+            "Pentecost Sermon.psd",
+            "Reformation Livestream.psd",
+            "Reformation Sermon.psd",
+            "SundaysOfEaster Livestream.psd",
+            "SundaysOfEaster Sermon.psd",
+            "Thanksgiving Livestream.psd",
+            "Thanksgiving Sermon.psd",
+            "Trinity Livestream.psd",
+            "Trinity Sermon.psd",
+            "Wedding Livestream.psd"
+        ];
+
+        // Populate and filter datalists on load
+        document.addEventListener("DOMContentLoaded", () => {
+            const liveDatalist = document.getElementById('liveDatalist');
+            const sermonDatalist = document.getElementById('sermonDatalist');
+            
+            REPO_TEMPLATES.forEach(filename => {
+                const lowerName = filename.toLowerCase();
+                
+                if (lowerName.includes('livestream')) {
+                    const option = document.createElement('option');
+                    option.value = filename;
+                    liveDatalist.appendChild(option);
+                } else if (lowerName.includes('sermon')) {
+                    const option = document.createElement('option');
+                    option.value = filename;
+                    sermonDatalist.appendChild(option);
+                }
+            });
+        });
+
+        function clearManualUploads() {
+            document.getElementById('psdUpload').value = "";
+            document.getElementById('psdSermonUpload').value = "";
+        }
+
+        function clearRepoSelects() {
+            document.getElementById('liveTemplateSelect').value = "";
+            document.getElementById('sermonTemplateSelect').value = "";
+        }
+
+        // ==========================================
+        // GLOBAL STATE & UTILITIES
+        // ==========================================
+        let globalDirectoryHandle = null;
+
+        document.getElementById('global-selectFolderBtn').addEventListener('click', async () => {
+            try {
+                globalDirectoryHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+                document.getElementById('global-folderNameDisplay').innerHTML = `Output Folder: <strong>${globalDirectoryHandle.name}</strong>`;
+            } catch (err) {
+                if (err.name !== 'AbortError') alert("Error accessing folder. Make sure you granted edit permissions.");
+            }
+        });
+
+        function switchTab(evt, tabId) {
+            const tabs = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabs.length; i++) tabs[i].classList.remove("active");
+            
+            const btns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < btns.length; i++) btns[i].classList.remove("active");
+            
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (!window.showDirectoryPicker) {
+                alert("Your browser does not fully support the File System Access API. Please use a modern Chromium browser (Chrome, Edge) for local folder saving/scanning.");
+            }
+        });
+
+        function formatDateLong(dateStr) {
+            if (!dateStr) return "";
+            const date = new Date(dateStr + 'T00:00:00'); 
+            const options = { month: 'long', day: 'numeric', year: 'numeric' };
+            let formatted = date.toLocaleDateString('en-US', options);
+            
+            const day = date.getDate();
+            let suffix = "th";
+            if (day % 10 === 1 && day !== 11) suffix = "st";
+            else if (day % 10 === 2 && day !== 12) suffix = "nd";
+            else if (day % 10 === 3 && day !== 13) suffix = "rd";
+            
+            return formatted.replace(day, day + suffix);
+        }
+
+        function getTableDataAsArray() {
+            const rows = document.querySelectorAll("#inputTable tbody tr");
+            const result = [];
+            let dateCounts = {}; 
+
+            rows.forEach((row) => {
+                const dateInput = row.querySelector(".row-date").value; 
+                const gospel = row.cells[1].innerText.trim();
+                const festival = row.cells[2].innerText.trim(); 
+                
+                if (dateInput) {
+                    if (!dateCounts[dateInput]) dateCounts[dateInput] = 1;
+                    else dateCounts[dateInput]++;
+                    
+                    let filenameCol = dateInput;
+                    if (dateCounts[dateInput] > 1) filenameCol = `${dateInput}-${dateCounts[dateInput]}`;
+
+                    const formattedDate = formatDateLong(dateInput); 
+                    
+                    result.push({
+                        filename: filenameCol,
+                        date: formattedDate,
+                        gospel: gospel,
+                        festival: festival
+                    });
+                }
+            });
+            return result;
+        }
+
+
+        // ==========================================
+        // TAB 1: DATASHEET LOGIC
+        // ==========================================
+        function openTemplate() {
+            window.open("https://docs.google.com/document/d/17hewCkpKdaNiL2CXUJOfCj1UKjInJhWi/edit?rtpof=true&tab=t.0", "_blank");
+        }
+
+        function handleEnter(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); 
+                const cell = event.target;
+                const row = cell.parentElement;
+                const columnIndex = cell.cellIndex;
+                const nextRow = row.nextElementSibling;
+                if (nextRow) nextRow.cells[columnIndex].focus();
+            }
+        }
+
+        function addRow(prefilledDate = "", prefilledGospel = "", prefilledFestival = "") {
+            const table = document.getElementById("inputTable").getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td><input type="date" class="row-date" value="${prefilledDate}"></td>
+                <td contenteditable="true" onkeydown="handleEnter(event)">${prefilledGospel}</td>
+                <td contenteditable="true" onkeydown="handleEnter(event)">${prefilledFestival}</td>
+            `;
+        }
+
+        function addNextSunday() {
+            const dateInputs = document.querySelectorAll(".row-date");
+            const lastInput = dateInputs[dateInputs.length - 1];
+            
+            if (!lastInput.value) return alert("Please set a date in the last row first!");
+
+            const lastDate = new Date(lastInput.value + 'T00:00:00');
+            const dayOfWeek = lastDate.getDay();
+            const daysUntilSunday = (dayOfWeek === 0) ? 7 : (7 - dayOfWeek);
+            
+            lastDate.setDate(lastDate.getDate() + daysUntilSunday);
+            addRow(lastDate.toISOString().split('T')[0]);
+        }
+
+        function addNextWednesday() {
+            const dateInputs = document.querySelectorAll(".row-date");
+            const lastInput = dateInputs[dateInputs.length - 1];
+            
+            if (!lastInput.value) return alert("Please set a date in the last row first!");
+
+            const lastDate = new Date(lastInput.value + 'T00:00:00');
+            const dayOfWeek = lastDate.getDay();
+            
+            // 3 represents Wednesday in JavaScript (0 = Sun, 1 = Mon, ..., 3 = Wed)
+            // (3 - dayOfWeek + 7) % 7 will calculate days until the *next* Wednesday.
+            // If the current day is already Wednesday (0), we set it to 7 to jump to the next week.
+            let daysUntilWednesday = (3 - dayOfWeek + 7) % 7 || 7;
+            
+            lastDate.setDate(lastDate.getDate() + daysUntilWednesday);
+            addRow(lastDate.toISOString().split('T')[0]);
+        }
+
+        function addRestOfMonth() {
+            const dateInputs = document.querySelectorAll(".row-date");
+            const lastInput = dateInputs[dateInputs.length - 1];
+            
+            if (!lastInput || !lastInput.value) return alert("Please set a date in the last row first!");
+
+            let nextDate = new Date(lastInput.value + 'T00:00:00');
+            let dayOfWeek = nextDate.getDay();
+            let daysUntilSunday = (dayOfWeek === 0) ? 7 : (7 - dayOfWeek);
+            
+            nextDate.setDate(nextDate.getDate() + daysUntilSunday);
+            let targetMonth = nextDate.getMonth();
+            
+            while (nextDate.getMonth() === targetMonth) {
+                addRow(nextDate.toISOString().split('T')[0]);
+                nextDate.setDate(nextDate.getDate() + 7);
+            }
+        }
+
+        function clearTable() {
+            if (confirm("Are you sure you want to clear the entire table?")) {
+                const tbody = document.getElementById("inputTable").getElementsByTagName('tbody')[0];
+                tbody.innerHTML = '';
+                addRow();
+            }
+        }
+
+        function downloadCSV() {
+            const dataArray = getTableDataAsArray();
+            let csvContent = "FILENAME,FESTIVAL,DATE,GOSPEL_VERSE\n";
+            
+            dataArray.forEach(row => {
+                csvContent += `${row.filename},"${row.festival}","${row.date}","${row.gospel}"\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "Livestream Thumbnails DataSheet.csv";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function handleDSFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                parseAndLoadDSCSV(e.target.result);
+                event.target.value = ''; 
+            };
+            reader.readAsText(file);
+        }
+
+        function parseAndLoadDSCSV(text) {
+            const lines = text.trim().split(/\r?\n/);
+            if (lines.length < 2) return alert("Uploaded CSV appears to be empty or lacks headers.");
+
+            const headers = lines[0].split(',').map(h => h.trim().toUpperCase());
+            const fileIdx = headers.indexOf('FILENAME');
+            const gospelIdx = headers.indexOf('GOSPEL_VERSE');
+            const festivalIdx = headers.indexOf('FESTIVAL');
+
+            if (fileIdx === -1 || gospelIdx === -1) return alert("Invalid CSV format. Missing FILENAME or GOSPEL_VERSE columns.");
+
+            const tbody = document.getElementById("inputTable").getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';
+
+            for(let i = 1; i < lines.length; i++) {
+                if(!lines[i].trim()) continue;
+                
+                let row = [], current = '', inQuotes = false;
+                for (let j = 0; j < lines[i].length; j++) {
+                    let char = lines[i][j];
+                    if (char === '"') inQuotes = !inQuotes;
+                    else if (char === ',' && !inQuotes) { row.push(current); current = ''; } 
+                    else current += char;
+                }
+                row.push(current);
+
+                const rawFilename = row[fileIdx] ? row[fileIdx].trim() : '';
+                const dateMatch = rawFilename.match(/^\d{4}-\d{2}-\d{2}/);
+                const dateVal = dateMatch ? dateMatch[0] : rawFilename;
+
+                const gospelVal = row[gospelIdx] ? row[gospelIdx].trim() : '';
+                const festivalVal = (festivalIdx !== -1 && row[festivalIdx]) ? row[festivalIdx].trim() : '';
+
+                addRow(dateVal, gospelVal, festivalVal);
+            }
+            if (tbody.children.length === 0) addRow();
+        }
+
+
+        // ==========================================
+        // TAB 2: PSD UPDATER LOGIC
+        // ==========================================
+        (() => {
+            const ppIframe = document.getElementById('photopea');
+            const processBtn = document.getElementById('psd-processBtn');
+            const statusEl = document.getElementById('psd-status');
+            
+            const liveTemplateSelect = document.getElementById('liveTemplateSelect');
+            const sermonTemplateSelect = document.getElementById('sermonTemplateSelect');
+            const psdUpload = document.getElementById('psdUpload');
+            const psdSermonUpload = document.getElementById('psdSermonUpload');
+            
+            const progressContainer = document.getElementById('psd-progressContainer');
+            const progressBar = document.getElementById('psd-progressBar');
+            const progressText = document.getElementById('psd-progressText');
+
+            let ppState = 0; 
+            let psdCsvData = [];
+            let currentIndex = 0;
+            let currentTemplate = 0; 
+            let isProcessingBatch = false;
+            let currentFilename = "";
+            let filesReceived = 0;
+            let isScriptDone = false;
+
+            // Helper to get selected template (returns File object or URL string)
+            function getTemplateSource(type) {
+                if (type === 'live') {
+                    if (psdUpload.files.length > 0) return psdUpload.files[0];
+                    if (liveTemplateSelect.value) return `./Templates/${liveTemplateSelect.value}`;
+                } else if (type === 'sermon') {
+                    if (psdSermonUpload.files.length > 0) return psdSermonUpload.files[0];
+                    if (sermonTemplateSelect.value) return `./Templates/${sermonTemplateSelect.value}`;
+                }
+                return null;
+            }
+
+            // Helper to load template into Photopea
+            async function loadTemplateToPhotopea(source) {
+                if (typeof source === 'string') {
+                    // Fetch from GitHub Repo
+                    try {
+                        // FIX: Safely encode special characters like '#' in the filename
+                        const urlParts = source.split('/');
+                        const fileName = urlParts.pop();
+                        const encodedSource = urlParts.join('/') + '/' + encodeURIComponent(fileName);
+            
+                        const response = await fetch(encodedSource);
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        const arrayBuffer = await response.arrayBuffer();
+                        ppIframe.contentWindow.postMessage(arrayBuffer, "*");
+                    } catch (error) {
+                        updateStatus(`Failed to fetch template from repository: ${source}. Are you running via a web server?`, 'error');
+                        processBtn.disabled = false;
+                        processBtn.innerText = "Process Batch";
+                    }
+                } else if (source instanceof File) {
+                    // Load manually uploaded file
+                    const reader = new FileReader();
+                    reader.onload = (e) => ppIframe.contentWindow.postMessage(e.target.result, "*");
+                    reader.readAsArrayBuffer(source);
+                }
+            }
+
+            function updateStatus(msg, type = 'info') {
+                statusEl.className = `status-box status-${type}`;
+                statusEl.innerText = msg;
+            }
+
+            function updateProgress(isDone = false) {
+                const sermonSource = getTemplateSource('sermon');
+                let totalTemplates = sermonSource ? 2 : 1;
+                let totalItems = psdCsvData.length * totalTemplates;
+                let percent = 100;
+                
+                if (!isDone) {
+                    let currentItem = (currentTemplate * psdCsvData.length) + currentIndex;
+                    percent = Math.round((currentItem / totalItems) * 100);
+                }
+                
+                progressBar.style.width = `${percent}%`;
+                let phaseText = totalTemplates === 2 && !isDone ? ` (Phase ${currentTemplate + 1}/2)` : "";
+                progressText.innerText = isDone ? "100% - Complete!" : `${percent}%${phaseText}`;
+            }
+
+            function checkRowComplete() {
+                if (isScriptDone && filesReceived >= 2) {
+                    currentIndex++;
+                    processNextRow();
+                }
+            }
+
+            function processNextRow() {
+                const sermonSource = getTemplateSource('sermon');
+
+                if (currentIndex >= psdCsvData.length) {
+                    if (currentTemplate === 0 && sermonSource) {
+                        currentTemplate = 1;
+                        currentIndex = 0;
+                        ppState = 4;
+                        updateStatus("Loading Sermon PSD template for Phase 2...", 'info');
+                        loadTemplateToPhotopea(sermonSource);
+                        return;
+                    } else {
+                        isProcessingBatch = false;
+                        ppState = 1;
+                        updateProgress(true); 
+                        currentTemplate = 0;
+                        let totalExported = psdCsvData.length * (sermonSource ? 2 : 1);
+                        updateStatus(`Batch complete! Saved ${totalExported} pairs of graphics into your Output Folder.`, 'success');
+                        processBtn.innerText = "Process Batch";
+                        processBtn.disabled = false;
+                        return;
+                    }
+                }
+
+                filesReceived = 0;
+                isScriptDone = false;
+                updateProgress();
+                
+                const row = psdCsvData[currentIndex];
+                if (currentTemplate === 1) currentFilename = (row.filename || `export_row_${currentIndex}`) + "_Sermon";
+                else currentFilename = row.filename || `export_row_${currentIndex}`;
+                
+                let templateName = currentTemplate === 0 ? "Livestream" : "Sermon";
+                updateStatus(`Processing ${templateName} (${currentIndex + 1}/${psdCsvData.length}): ${currentFilename}`, 'info');
+
+                const safeGospel = row.gospel.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\r');
+                const safeDate = row.date.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\r');
+                const safeFestival = (row.festival || "").replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\r');
+
+                const script = `
+                    function findLayerByName(container, name) {
+                        var searchName = name.toLowerCase();
+                        for (var i = 0; i < container.layers.length; i++) {
+                            var layer = container.layers[i];
+                            if (layer.name.toLowerCase() === searchName) return layer;
+                            if (layer.typename === "LayerSet") {
+                                var found = findLayerByName(layer, name);
+                                if (found) return found;
+                            }
+                        }
+                        return null;
+                    }
+                    try {
+                        var doc = app.activeDocument;
+                        var gospelLayer = findLayerByName(doc, "Gospel");
+                        var dateLayer = findLayerByName(doc, "Date");
+                        var festivalLayer = findLayerByName(doc, "Festival");
+
+                        if (gospelLayer && gospelLayer.kind === LayerKind.TEXT) gospelLayer.textItem.contents = "${safeGospel}";
+                        if (dateLayer && dateLayer.kind === LayerKind.TEXT) dateLayer.textItem.contents = "${safeDate}";
+                        if (festivalLayer && festivalLayer.kind === LayerKind.TEXT) festivalLayer.textItem.contents = "${safeFestival}";
+                        
+                        app.activeDocument.saveToOE("psd");
+                        app.activeDocument.saveToOE("jpg");
+                    } catch(e) {}
+                `;
+                ppIframe.contentWindow.postMessage(script, "*");
+            }
+
+            window.addEventListener("message", async function(e) {
+                if (e.origin !== "https://www.photopea.com") return;
+
+                if (e.data instanceof ArrayBuffer) {
+                    const localFilename = currentFilename; 
+                    const bytes = new Uint8Array(e.data);
+                    let ext = "bin", mime = "application/octet-stream";
+
+                    if (bytes[0] === 0xFF && bytes[1] === 0xD8) { ext = "jpg"; mime = "image/jpeg"; } 
+                    else if (bytes[0] === 0x38 && bytes[1] === 0x42 && bytes[2] === 0x50 && bytes[3] === 0x53) { ext = "psd"; mime = "image/vnd.adobe.photoshop"; }
+
+                    const blob = new Blob([e.data], { type: mime });
+
+                    if (globalDirectoryHandle) {
+                        try {
+                            const dateMatch = localFilename.match(/^\d{4}-\d{2}-\d{2}/);
+                            const baseDateFolder = dateMatch ? dateMatch[0] : localFilename;
+
+                            const dateDir = await globalDirectoryHandle.getDirectoryHandle(baseDateFolder, { create: true });
+                            const thumbsDir = await dateDir.getDirectoryHandle('Thumbnails', { create: true });
+                            const fileHandle = await thumbsDir.getFileHandle(`${localFilename}.${ext}`, { create: true });
+                            
+                            const writable = await fileHandle.createWritable();
+                            await writable.write(blob);
+                            await writable.close();
+                        } catch (saveErr) {
+                            console.error("File System Save Error:", saveErr);
+                            triggerFallbackDownload(blob, `${localFilename}.${ext}`);
+                        }
+                    } else {
+                        triggerFallbackDownload(blob, `${localFilename}.${ext}`);
+                    }
+                    
+                    filesReceived++;
+                    checkRowComplete();
+                    return;
+                }
+
+                if (typeof e.data === "string" && e.data === "done") {
+                    if (ppState === 0) {
+                        ppState = 1; processBtn.disabled = false; processBtn.innerText = "Process Batch";
+                        updateStatus("Engine ready! Select your Master Folder and templates to begin.", 'success');
+                    } else if (ppState === 2) {
+                        ppState = 3; isProcessingBatch = true; currentIndex = 0; currentTemplate = 0; processNextRow();
+                    } else if (ppState === 3 && isProcessingBatch) {
+                        isScriptDone = true; checkRowComplete();
+                    } else if (ppState === 4) {
+                        ppState = 5; isProcessingBatch = true; processNextRow();
+                    } else if (ppState === 5 && isProcessingBatch) {
+                        isScriptDone = true; checkRowComplete();
+                    }
+                }
+            });
+
+            function triggerFallbackDownload(blob, filename) {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url; link.download = filename;
+                document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(url), 1000); 
+            }
+
+            processBtn.addEventListener('click', () => {
+                if (ppState !== 1) return alert("Please wait for engine to be ready.");
+                
+                const liveSource = getTemplateSource('live');
+                if (!liveSource) return updateStatus("Please select a Livestream PSD from the repo or upload a custom one.", 'error');
+                if (!globalDirectoryHandle) return alert("Please choose an Output Folder at the top of the page.");
+
+                psdCsvData = getTableDataAsArray();
+                if (psdCsvData.length === 0) return alert("No valid rows found in the DataSheet (Tab 1). Please add data first.");
+
+                processBtn.disabled = true;
+                processBtn.innerText = "Processing...";
+                progressContainer.style.display = 'block';
+                currentTemplate = 0;
+
+                updateStatus("Reading live DataSheet. Fetching Livestream template...", 'info');
+                updateProgress();
+
+                ppState = 2; 
+                loadTemplateToPhotopea(liveSource);
+            });
+        })();
+
+
+        // ==========================================
+        // TAB 3: SCHEDULER LOGIC
+        // ==========================================
+        (() => {
+            const generateBtn = document.getElementById('sch-generateBtn');
+            const tableContainer = document.getElementById('sch-tableContainer');
+            const tableBody = document.getElementById('sch-tableBody');
+
+            async function findThumbnailInDirectory(dirHandle, targetFilename) {
+                if (!dirHandle) return null;
+
+                const dateMatch = targetFilename.match(/^\d{4}-\d{2}-\d{2}/);
+                const baseDateFolder = dateMatch ? dateMatch[0] : targetFilename;
+                const yearFolder = baseDateFolder.substring(0, 4);
+
+                function isExactMatch(entryName) {
+                    const nameWithoutExt = entryName.replace(/\.[^/.]+$/, "");
+                    return nameWithoutExt.toLowerCase() === targetFilename.toLowerCase() && 
+                           !entryName.toLowerCase().includes('_sermon') && 
+                           entryName.match(/\.(jpe?g|png)$/i);
+                }
+
+                try {
+                    // Try fast path 1: Year -> Date -> Thumbnails
+                    if (/^\d{4}$/.test(yearFolder)) {
+                        try {
+                            const yearDir = await dirHandle.getDirectoryHandle(yearFolder);
+                            const dateDir = await yearDir.getDirectoryHandle(baseDateFolder);
+                            const thumbsDir = await dateDir.getDirectoryHandle('Thumbnails');
+                            for await (const entry of thumbsDir.values()) {
+                                if (entry.kind === 'file' && isExactMatch(entry.name)) return await entry.getFile();
+                            }
+                        } catch (e) {} 
+                    }
+
+                    // Try fast path 2: Date -> Thumbnails
+                    try {
+                        const dateDir = await dirHandle.getDirectoryHandle(baseDateFolder);
+                        const thumbsDir = await dateDir.getDirectoryHandle('Thumbnails');
+                        for await (const entry of thumbsDir.values()) {
+                            if (entry.kind === 'file' && isExactMatch(entry.name)) return await entry.getFile();
+                        }
+                    } catch (e) {}
+
+                    // Fallback: Deep scan limit depth to 3
+                    async function deepScan(dir, depth) {
+                        if (depth > 3) return null;
+                        for await (const entry of dir.values()) {
+                            if (entry.kind === 'directory') {
+                                const found = await deepScan(await dir.getDirectoryHandle(entry.name), depth + 1);
+                                if (found) return found;
+                            } else if (entry.kind === 'file' && isExactMatch(entry.name)) {
+                                return await entry.getFile();
+                            }
+                        }
+                        return null;
+                    }
+                    return await deepScan(dirHandle, 0);
+
+                } catch (err) { console.warn("Search interrupted or failed:", err); }
+                return null; 
+            }
+
+            generateBtn.addEventListener('click', async () => {
+                if (!globalDirectoryHandle && !confirm("No Output Folder selected at the top. Thumbnails won't appear. Proceed?")) return;
+
+                const schCsvData = getTableDataAsArray();
+                if (schCsvData.length === 0) return alert("No valid rows found in the DataSheet (Tab 1). Please add data first.");
+
+                generateBtn.innerHTML = "Scanning Folder & Generating...";
+                generateBtn.disabled = true;
+
+                try {
+                    tableBody.innerHTML = '';
+                    
+                    for (const row of schCsvData) {
+                        const tr = document.createElement('tr');
+                        const thumbFile = await findThumbnailInDirectory(globalDirectoryHandle, row.filename);
+                        
+                        let thumbHTML = '<div class="no-thumb">Not Found</div>';
+                        if (thumbFile) {
+                            const objectUrl = URL.createObjectURL(thumbFile);
+                            thumbHTML = `<img src="${objectUrl}" alt="${row.filename}" class="thumb-preview">`;
+                        }
+                        
+                        const festivalText = row.festival || '';
+                        const gospelText = row.gospel || '';
+                        const dateText = row.date || '';
+
+                        let defaultTime = "8:00 A.M."; 
+                        if (dateText) {
+                            const cleanDateText = dateText.replace(/(\d+)(st|nd|rd|th)/, '$1');
+                            const parsedDate = new Date(cleanDateText);
+                            if (!isNaN(parsedDate)) {
+                                const dayOfWeek = parsedDate.getDay();
+                                const dateOfMonth = parsedDate.getDate();
+                                if (dayOfWeek !== 0) defaultTime = "6:00 P.M.";
+                                else {
+                                    const weekOfMonth = Math.ceil(dateOfMonth / 7);
+                                    if (weekOfMonth === 1 || weekOfMonth === 3) defaultTime = "9:30 A.M.";
+                                }
+                            }
+                        }
+
+                        tr.innerHTML = `
+                            <td class="thumb-cell">${thumbHTML}</td>
+                            <td>${festivalText || '-'}</td>
+                            <td>${gospelText || '-'}</td>
+                            <td>${dateText || '-'}</td>
+                            <td>
+                                <select class="form-select time-select">
+                                    <option value="8:00 A.M." ${defaultTime === '8:00 A.M.' ? 'selected' : ''}>8:00 A.M.</option>
+                                    <option value="9:30 A.M." ${defaultTime === '9:30 A.M.' ? 'selected' : ''}>9:30 A.M.</option>
+                                    <option value="6:00 P.M." ${defaultTime === '6:00 P.M.' ? 'selected' : ''}>6:00 P.M.</option>
+                                </select>
+                            </td>
+                            <td>
+                                <span class="yt-title" title="Click to copy"></span>
+                            </td>
+                        `;
+                        
+                        const select = tr.querySelector('.time-select');
+                        const ytTitle = tr.querySelector('.yt-title');
+                        
+                        const updateTitle = () => {
+                            const parts = [festivalText, gospelText, dateText, select.value].filter(Boolean);
+                            ytTitle.textContent = parts.join(" | ");
+                        };
+                        
+                        select.addEventListener('change', updateTitle);
+                        updateTitle();
+                        tableBody.appendChild(tr);
+                    }
+                    tableContainer.style.display = 'block';
+                } catch (err) {
+                    alert(`Error: ${err.message}`);
+                } finally {
+                    generateBtn.innerText = "Scan Output Folder & Generate Table";
+                    generateBtn.disabled = false;
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
