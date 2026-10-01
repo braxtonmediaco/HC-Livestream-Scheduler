@@ -20,6 +20,9 @@
             --text-main: #333333;
             --text-muted: #6c757d;
             --border: #dee2e6;
+            --surface-alt: #fafbfc;
+            --surface-sunken: #e9ecef;
+            --surface-hover: #dde2e6;
         }
 
         body { 
@@ -43,7 +46,7 @@
         /* --- Global Settings Bar --- */
         .global-settings {
             padding: 20px 25px;
-            background-color: #fcfcfc;
+            background-color: var(--surface-alt);
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -58,7 +61,7 @@
         /* --- Tabs Navigation --- */
         .tab-nav {
             display: flex;
-            background-color: #e9ecef;
+            background-color: var(--surface-sunken);
             border-bottom: 1px solid var(--border);
         }
         .tab-btn {
@@ -74,7 +77,7 @@
             outline: none;
         }
         .tab-btn:hover {
-            background-color: #dde2e6;
+            background-color: var(--surface-hover);
             color: var(--text-main);
         }
         .tab-btn.active {
@@ -101,7 +104,7 @@
             flex: 1; 
             min-width: 250px;
             padding: 20px; 
-            background: #fafbfc; 
+            background: var(--surface-alt); 
             border: 1px solid var(--border); 
             border-radius: 6px; 
             display: flex; 
@@ -145,26 +148,26 @@
         .table-container { overflow-x: auto; border-radius: 6px; border: 1px solid var(--border); margin-top: 20px; }
         table { width: 100%; border-collapse: collapse; background: white; text-align: left; }
         th, td { padding: 15px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-        th { background-color: #f8f9fa; color: #495057; font-weight: 600; white-space: nowrap; }
-        tr:hover td { background-color: #fcfcfc; }
+        th { background-color: var(--surface-alt); color: #495057; font-weight: 600; white-space: nowrap; }
+        tr:hover td { background-color: var(--surface-alt); }
         
         /* DataSheet Specific Table Styles */
         #inputTable input[type="date"] { border: none; width: 100%; font-family: inherit; font-size: inherit; background: transparent; color: var(--text-main); outline: none; cursor: pointer; }
         #inputTable td[contenteditable="true"] { white-space: nowrap; overflow: hidden; outline: none; }
-        #inputTable td[contenteditable="true"]:focus { background-color: #e9ecef; box-shadow: inset 0 0 0 2px var(--primary); border-radius: 4px; }
+        #inputTable td[contenteditable="true"]:focus { background-color: var(--surface-sunken); box-shadow: inset 0 0 0 2px var(--primary); border-radius: 4px; }
 
         /* Scheduler Specific Styles */
         .thumb-cell { width: 160px; text-align: center; }
         .thumb-preview { max-width: 150px; max-height: 100px; border-radius: 4px; border: 1px solid #ccc; object-fit: cover; display: block; }
-        .no-thumb { width: 150px; height: 85px; background-color: #e9ecef; color: #adb5bd; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px dashed #ccc; font-size: 0.85em; }
+        .no-thumb { width: 150px; height: 85px; background-color: var(--surface-sunken); color: #adb5bd; display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 1px dashed #ccc; font-size: 0.85em; }
         .folder-display { color: var(--success); font-weight: bold; word-break: break-all; margin-top: 10px; display: block; }
         
         .yt-title {
-            background-color: #e9ecef; padding: 10px 14px; border-radius: 4px; border: 1px solid #ced4da;
+            background-color: var(--surface-sunken); padding: 10px 14px; border-radius: 4px; border: 1px solid #ced4da;
             font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #212529;
             user-select: all; cursor: pointer; display: block; white-space: nowrap;
         }
-        .yt-title:hover { background-color: #dde2e6; }
+        .yt-title:hover { background-color: var(--surface-hover); }
 
         /* --- Status & Progress --- */
         .status-box { margin-top: 20px; padding: 15px; border-radius: 6px; font-weight: bold; text-align: center; border: 1px solid transparent; }
@@ -174,9 +177,39 @@
         .status-warning { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
         
         .progress-container { margin-top: 20px; display: none; }
-        .progress-bar-bg { background-color: #e9ecef; border-radius: 6px; height: 24px; width: 100%; overflow: hidden; border: 1px solid #ced4da; }
+        .progress-bar-bg { background-color: var(--surface-sunken); border-radius: 6px; height: 24px; width: 100%; overflow: hidden; border: 1px solid #ced4da; }
         .progress-bar-fill { background-color: var(--success); height: 100%; width: 0%; transition: width 0.3s ease; }
         .progress-header { display: flex; justify-content: space-between; font-size: 0.9em; font-weight: bold; margin-bottom: 8px; color: var(--text-muted); }
+
+
+        /* --- Live Preview Viewer --- */
+        .btn-sm { padding: 8px 14px; font-size: 14px; }
+        .btn:focus-visible, .film:focus-visible, .tab-btn:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+        .viewer { margin: 25px 0; padding: 20px; background: var(--surface-alt); border: 1px solid var(--border); border-radius: 6px; }
+        .viewer-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; flex-wrap: wrap; }
+        .viewer-head h3 { margin: 0 0 4px 0; color: var(--text-main); }
+        .viewer-head .hint { margin: 0; }
+        .chk-list { list-style: none; padding: 0; margin: 15px 0; display: grid; gap: 6px; }
+        .chk { font-size: 0.92em; padding: 8px 12px; border-radius: 4px; border-left: 4px solid transparent; background: var(--surface); }
+        .chk-ok { border-left-color: var(--success); }
+        .chk-warn { border-left-color: var(--warning); background: #fff8e1; }
+        .chk-error { border-left-color: var(--danger); background: #fdecee; }
+        .chk-info { border-left-color: var(--info); }
+        .stage { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #111; border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); }
+        .stage img { width: 100%; height: 100%; object-fit: contain; display: block; }
+        .stage-msg { position: absolute; margin: 0; padding: 0 20px; text-align: center; color: #e9ecef; font-weight: 600; }
+        .stage-bar { display: flex; align-items: center; gap: 15px; margin-top: 12px; }
+        .stage-info { flex: 1; min-width: 0; font-size: 0.92em; color: var(--text-muted); word-break: break-word; }
+        .stage-info strong { color: var(--text-main); }
+        .layer-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+        .pill { font-size: 0.8em; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+        .pill-ok { background: #d4edda; color: #155724; }
+        .pill-bad { background: #f8d7da; color: #721c24; }
+        .filmstrip { display: flex; gap: 10px; overflow-x: auto; padding: 12px 2px 4px; margin-top: 8px; }
+        .film { flex: 0 0 150px; background: var(--surface); border: 2px solid var(--border); border-radius: 6px; padding: 4px; cursor: pointer; text-align: left; font-family: inherit; color: var(--text-main); }
+        .film.active { border-color: var(--primary); }
+        .film img, .film-ph { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: flex; align-items: center; justify-content: center; background: var(--surface-sunken); border-radius: 3px; color: var(--text-muted); }
+        .film-label { display: block; font-size: 0.75em; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         /* Hidden elements */
         #photopea { 
@@ -196,7 +229,7 @@
     <div class="app-container">
         
         <div class="global-settings">
-            <h2>Project Workspace</h2> <button class="btn btn-primary"><a href="howto.html">How to Tutorial</a></button>
+            <h2>Project Workspace</h2> <a class="btn btn-primary" href="howto.html" style="text-decoration:none">How to Tutorial</a>
             <div class="global-folder-wrapper">
                 <span class="folder-display hint" id="global-folderNameDisplay">No output folder selected</span>
                 <button id="global-selectFolderBtn" class="btn btn-primary">Choose Output Folder (To Save Images)</button>
@@ -276,6 +309,27 @@
                     <input type="file" id="psdSermonUpload" accept=".psd" onchange="clearRepoSelects()">
                 </div>
             </div>
+
+            <section class="viewer" aria-labelledby="pv-title">
+                <div class="viewer-head">
+                    <div>
+                        <h3 id="pv-title">Live Preview</h3>
+                        <p class="hint">Rendered from the selected PSDs and your DataSheet rows. This is what Process Batch will export.</p>
+                    </div>
+                    <button id="pv-refresh" type="button" class="btn btn-outline btn-sm">↻ Refresh</button>
+                </div>
+                <ul id="pv-check" class="chk-list" aria-live="polite"></ul>
+                <div class="stage">
+                    <img id="pv-image" alt="" hidden>
+                    <p id="pv-msg" class="stage-msg" role="status"></p>
+                </div>
+                <div class="stage-bar">
+                    <button id="pv-prev" type="button" class="btn btn-outline btn-sm" aria-label="Previous file">◀</button>
+                    <div class="stage-info"><strong id="pv-count"></strong> <span id="pv-caption"></span><div id="pv-layers" class="layer-pills"></div></div>
+                    <button id="pv-next" type="button" class="btn btn-outline btn-sm" aria-label="Next file">▶</button>
+                </div>
+                <div id="pv-strip" class="filmstrip"></div>
+            </section>
 
             <button id="psd-processBtn" class="btn btn-success w-100" disabled>Waiting for Engine...</button>
 
@@ -414,6 +468,7 @@
             
             document.getElementById(tabId).classList.add("active");
             evt.currentTarget.classList.add("active");
+            document.dispatchEvent(new CustomEvent("tabchange", { detail: tabId }));
         }
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -648,6 +703,7 @@
             let currentFilename = "";
             let filesReceived = 0;
             let isScriptDone = false;
+            let pending = null;
 
             // Helper to get selected template (returns File object or URL string)
             function getTemplateSource(type) {
@@ -788,6 +844,14 @@
             window.addEventListener("message", async function(e) {
                 if (e.origin !== "https://www.photopea.com") return;
 
+                // Preview jobs (see Live Preview) take priority over the batch state machine
+                if (pending) {
+                    if (e.data instanceof ArrayBuffer) pending.buffers.push(e.data);
+                    else if (e.data === "done") { const p = pending; pending = null; clearTimeout(p.timer); p.resolve(p); }
+                    else if (typeof e.data === "string") pending.strings.push(e.data);
+                    return;
+                }
+
                 if (e.data instanceof ArrayBuffer) {
                     const localFilename = currentFilename; 
                     const bytes = new Uint8Array(e.data);
@@ -827,6 +891,7 @@
                     if (ppState === 0) {
                         ppState = 1; processBtn.disabled = false; processBtn.innerText = "Process Batch";
                         updateStatus("Engine ready! Select your Master Folder and templates to begin.", 'success');
+                        onEngineReady();
                     } else if (ppState === 2) {
                         ppState = 3; isProcessingBatch = true; currentIndex = 0; currentTemplate = 0; processNextRow();
                     } else if (ppState === 3 && isProcessingBatch) {
@@ -847,7 +912,173 @@
                 setTimeout(() => URL.revokeObjectURL(url), 1000); 
             }
 
-            processBtn.addEventListener('click', () => {
+
+            // ------------------------------------------
+            // LIVE PREVIEW
+            // ------------------------------------------
+            const $ = id => document.getElementById(id);
+            const pvCheck = $('pv-check'), pvImg = $('pv-image'), pvMsg = $('pv-msg'), pvCount = $('pv-count'),
+                  pvCap = $('pv-caption'), pvLayers = $('pv-layers'), pvStrip = $('pv-strip'),
+                  pvPrev = $('pv-prev'), pvNext = $('pv-next');
+            const SAMPLE_ROW = { filename: 'Sample', date: 'January 1st, 2027', gospel: 'Gospel text appears here', festival: 'Festival Name' };
+            let previewGen = 0, previewChain = Promise.resolve(), loadedKey = null, engineReady = false;
+            let items = [], activeIdx = 0, emptyMsg = 'Waiting for the rendering engine…', debounceT;
+            const tplCache = new Map(), renderCache = new Map();
+            const tabActive = () => $('tab-psd').classList.contains('active');
+            const esc = s => (s || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\r?\n/g, '\\r');
+
+            function resolveTemplate(type) {
+                const up = type === 'live' ? psdUpload : psdSermonUpload;
+                const sel = type === 'live' ? liveTemplateSelect : sermonTemplateSelect;
+                if (up.files.length) { const f = up.files[0]; return { state: 'custom', name: f.name, source: f, key: `f:${f.name}:${f.size}:${f.lastModified}` }; }
+                const v = sel.value.trim();
+                if (!v) return { state: 'none' };
+                if (!REPO_TEMPLATES.includes(v)) return { state: 'invalid', name: v };
+                return { state: 'repo', name: v, source: `./Templates/${v}`, key: 'r:' + v };
+            }
+
+            function updateTemplateCheck() {
+                const out = [], t = { live: resolveTemplate('live'), sermon: resolveTemplate('sermon') };
+                [['live', 'Livestream', 'sermon'], ['sermon', 'Sermon', 'livestream']].forEach(([k, label, wrong]) => {
+                    const r = t[k];
+                    if (r.state === 'none') out.push(k === 'live' ? ['error', `${label}: no template selected`] : ['info', `${label}: none selected. Only Livestream images will be made.`]);
+                    else if (r.state === 'invalid') out.push(['error', `${label}: "${r.name}" isn't in the template list. Pick one from the dropdown.`]);
+                    else if (r.name.toLowerCase().includes(wrong)) out.push(['warn', `${label}: ${r.name}. The file name says "${wrong}", is this the right file?`]);
+                    else out.push(['ok', `${label}: ${r.name} (${r.state === 'repo' ? 'from repo' : 'custom upload'})`]);
+                });
+                const base = n => n.replace(/\.psd$/i, '').replace(/\s*(livestream|sermon)\s*$/i, '').trim().toLowerCase();
+                if (t.live.name && t.sermon.name && t.live.state !== 'invalid' && t.sermon.state !== 'invalid') {
+                    const a = base(t.live.name), b = base(t.sermon.name);
+                    if (!a.startsWith(b) && !b.startsWith(a)) out.push(['warn', 'The Livestream and Sermon templates look like different services. Confirm that is intended.']);
+                }
+                const icons = { ok: '✓', warn: '⚠', error: '✕', info: 'ℹ' };
+                pvCheck.replaceChildren(...out.map(([c, m]) => {
+                    const li = document.createElement('li'); li.className = 'chk chk-' + c;
+                    li.textContent = `${icons[c]} ${m}`; return li;
+                }));
+            }
+
+            function buildItems() {
+                const prev = items[activeIdx];
+                const rows = getTableDataAsArray(), sample = !rows.length, useRows = sample ? [SAMPLE_ROW] : rows;
+                const tracks = [['live', 'Livestream', ''], ['sermon', 'Sermon', '_Sermon']]
+                    .map(t => ({ t, tpl: resolveTemplate(t[0]) })).filter(x => x.tpl.state === 'repo' || x.tpl.state === 'custom');
+                items = [];
+                useRows.forEach(row => tracks.forEach(({ t, tpl }) => {
+                    const ck = [tpl.key, row.date, row.gospel, row.festival].join('|'), hit = renderCache.get(ck);
+                    items.push({ track: t, tpl, row, sample, name: row.filename + t[2], ck, url: hit ? hit.url : null, layers: hit ? hit.layers : null, status: hit ? 'done' : 'pending' });
+                }));
+                const keep = prev ? items.findIndex(i => i.name === prev.name && i.track[0] === prev.track[0]) : -1;
+                activeIdx = keep >= 0 ? keep : 0;
+                const live = resolveTemplate('live');
+                emptyMsg = !engineReady ? 'Waiting for the rendering engine…' : live.state === 'invalid' ? 'Choose a Livestream template from the list to see a preview.' : 'Select a Livestream template to see a preview.';
+            }
+
+            function paint() {
+                pvStrip.replaceChildren(...items.map((it, i) => {
+                    const b = document.createElement('button'); b.type = 'button';
+                    b.className = 'film' + (i === activeIdx ? ' active' : ''); b.setAttribute('aria-pressed', String(i === activeIdx));
+                    const th = it.url ? Object.assign(document.createElement('img'), { src: it.url, alt: '' })
+                                      : Object.assign(document.createElement('span'), { className: 'film-ph', textContent: it.status === 'error' ? '✕' : '…' });
+                    const lb = Object.assign(document.createElement('span'), { className: 'film-label', textContent: `${it.track[0] === 'live' ? 'Live' : 'Sermon'} · ${it.name}` });
+                    b.append(th, lb); b.onclick = () => { activeIdx = i; paint(); }; return b;
+                }));
+                pvPrev.disabled = activeIdx <= 0; pvNext.disabled = activeIdx >= items.length - 1;
+                pvLayers.replaceChildren();
+                const it = items[activeIdx];
+                if (!it) { pvImg.hidden = true; pvMsg.hidden = false; pvMsg.textContent = emptyMsg; pvCount.textContent = ''; pvCap.textContent = ''; return; }
+                const folder = (it.name.match(/^\d{4}-\d{2}-\d{2}/) || [it.name])[0];
+                pvCount.textContent = `${activeIdx + 1} of ${items.length}`;
+                pvCap.textContent = `${it.track[1]} · ${folder}/Thumbnails/${it.name}.jpg + .psd` + (it.sample ? ' · sample text (add dated rows in the DataSheet)' : '');
+                if (it.url) { pvImg.src = it.url; pvImg.alt = `${it.track[1]} preview: ${it.name}`; pvImg.hidden = false; pvMsg.hidden = true; }
+                else { pvImg.hidden = true; pvMsg.hidden = false; pvMsg.textContent = it.status === 'error' ? `Preview failed: ${it.error}` : it.status === 'rendering' ? 'Rendering preview…' : 'Queued…'; }
+                if (it.layers) ['Gospel', 'Date', 'Festival'].forEach((n, k) => {
+                    const ok = it.layers[k] === '1', s = document.createElement('span');
+                    s.className = 'pill ' + (ok ? 'pill-ok' : 'pill-bad'); s.textContent = `${ok ? '✓' : '✕'} ${n}${ok ? '' : ' layer not found'}`; pvLayers.append(s);
+                });
+            }
+
+            function send(payload, ms = 60000) {
+                return new Promise((resolve, reject) => {
+                    const p = { buffers: [], strings: [], resolve };
+                    p.timer = setTimeout(() => { if (pending === p) pending = null; reject(new Error('The rendering engine timed out')); }, ms);
+                    pending = p; ppIframe.contentWindow.postMessage(payload, '*');
+                });
+            }
+
+            async function ensureLoaded(tpl) {
+                if (loadedKey === tpl.key) return;
+                loadedKey = null;
+                let buf = tplCache.get(tpl.key);
+                if (!buf) {
+                    try {
+                        if (typeof tpl.source === 'string') {
+                            const parts = tpl.source.split('/'), fn = parts.pop();
+                            const r = await fetch(parts.join('/') + '/' + encodeURIComponent(fn));
+                            if (!r.ok) throw new Error('HTTP ' + r.status);
+                            buf = await r.arrayBuffer();
+                        } else buf = await tpl.source.arrayBuffer();
+                    } catch (err) { throw new Error(`Couldn't load ${tpl.name}. Are you running via a web server?`); }
+                    tplCache.set(tpl.key, buf);
+                }
+                await send('try{while(app.documents.length){app.activeDocument.close(SaveOptions.DONOTSAVECHANGES);}}catch(e){}');
+                await send(buf, 120000);
+                loadedKey = tpl.key;
+            }
+
+            function buildPreviewScript(row) {
+                return `function f(c,n){n=n.toLowerCase();for(var i=0;i<c.layers.length;i++){var l=c.layers[i];if(l.name.toLowerCase()===n)return l;if(l.typename==="LayerSet"){var x=f(l,n);if(x)return x;}}return null;}
+try{var d=app.activeDocument,r=[],p=[["Gospel","${esc(row.gospel)}"],["Date","${esc(row.date)}"],["Festival","${esc(row.festival)}"]];
+for(var k=0;k<p.length;k++){var l=f(d,p[k][0]);if(l&&l.kind===LayerKind.TEXT){l.textItem.contents=p[k][1];r.push(1);}else r.push(0);}
+app.echoToOE("LAYERS:"+r.join(","));d.saveToOE("jpg:0.7");}catch(e){app.echoToOE("ERR:"+e);}`;
+            }
+
+            async function renderAll(gen, mine) {
+                const live = () => gen === previewGen && ppState === 1;
+                const first = mine[activeIdx], order = [...new Set(mine.map(i => i.track[0]))].sort(a => (first && a === first.track[0]) ? -1 : 1);
+                for (const t of order) {
+                    const todo = mine.filter(i => i.track[0] === t && i.status === 'pending').sort((a, b) => (b === first) - (a === first));
+                    if (!todo.length) continue;
+                    if (!live()) return;
+                    try { await ensureLoaded(todo[0].tpl); }
+                    catch (err) { todo.forEach(i => { i.status = 'error'; i.error = err.message; }); paint(); continue; }
+                    for (const i of todo) {
+                        if (!live()) return;
+                        i.status = 'rendering'; if (gen === previewGen) paint();
+                        try {
+                            const res = await send(buildPreviewScript(i.row));
+                            const jpg = res.buffers.find(b => new Uint8Array(b)[0] === 0xFF);
+                            if (!jpg) throw new Error((res.strings.find(s => s.startsWith('ERR:')) || 'No image came back from the engine').replace('ERR:', ''));
+                            i.layers = ((res.strings.find(s => s.startsWith('LAYERS:')) || '').slice(7)).split(',');
+                            i.url = URL.createObjectURL(new Blob([jpg], { type: 'image/jpeg' }));
+                            i.status = 'done'; renderCache.set(i.ck, { url: i.url, layers: i.layers });
+                        } catch (err) { i.status = 'error'; i.error = err.message; }
+                        if (gen === previewGen) paint();
+                    }
+                }
+            }
+
+            function refreshPreview() {
+                const gen = ++previewGen;
+                buildItems(); paint(); updateTemplateCheck();
+                if (!engineReady || ppState !== 1 || !items.length) return;
+                const mine = items;
+                previewChain = previewChain.then(() => renderAll(gen, mine)).catch(console.warn);
+            }
+
+            function onEngineReady() { engineReady = true; if (tabActive()) refreshPreview(); else buildItems(); }
+
+            [liveTemplateSelect, sermonTemplateSelect, psdUpload, psdSermonUpload].forEach(el => {
+                const handler = () => { updateTemplateCheck(); clearTimeout(debounceT); debounceT = setTimeout(() => { if (tabActive()) refreshPreview(); }, 500); };
+                el.addEventListener('input', handler); el.addEventListener('change', handler);
+            });
+            $('pv-refresh').addEventListener('click', refreshPreview);
+            pvPrev.addEventListener('click', () => { if (activeIdx > 0) { activeIdx--; paint(); } });
+            pvNext.addEventListener('click', () => { if (activeIdx < items.length - 1) { activeIdx++; paint(); } });
+            document.addEventListener('tabchange', e => { if (e.detail === 'tab-psd') refreshPreview(); });
+            updateTemplateCheck(); paint();
+
+            processBtn.addEventListener('click', async () => {
                 if (ppState !== 1) return alert("Please wait for engine to be ready.");
                 
                 const liveSource = getTemplateSource('live');
@@ -865,7 +1096,8 @@
                 updateStatus("Reading live DataSheet. Fetching Livestream template...", 'info');
                 updateProgress();
 
-                ppState = 2; 
+                previewGen++; await previewChain; loadedKey = null; // stop any preview renders first
+                ppState = 2;
                 loadTemplateToPhotopea(liveSource);
             });
         })();
